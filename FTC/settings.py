@@ -24,14 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'olx-bexzlklp4hs9591t&#vij^i+m@08(-l^--bj0nr%m-zs5k')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ftc-a51j.onrender.com']
-
-# Add Render hostname if available
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+ALLOWED_HOSTS = []
 
 # Performance Settings
 CACHES = {
@@ -83,7 +78,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -121,9 +115,6 @@ WSGI_APPLICATION = 'FTC.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-import dj_database_url
-
-# Default to MySQL for local development
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -134,13 +125,6 @@ DATABASES = {
         'PORT':'3306'
     }
 }
-
-# Override with PostgreSQL if DATABASE_URL is provided (production on Render)
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
 
 
 # Password validation
@@ -184,9 +168,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Required for collectstati
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'assets')
 ]
-
-# WhiteNoise configuration for serving static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
