@@ -121,6 +121,9 @@ WSGI_APPLICATION = 'FTC.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+import dj_database_url
+
+# Default to MySQL for local development
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -131,6 +134,13 @@ DATABASES = {
         'PORT':'3306'
     }
 }
+
+# Override with PostgreSQL if DATABASE_URL is provided (production on Render)
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 
 
 # Password validation
@@ -164,7 +174,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-DEBUG = True
 
 # Static files (CSS, JavaScript, Images)
 
@@ -175,6 +184,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Required for collectstati
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'assets')
 ]
+
+# WhiteNoise configuration for serving static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
