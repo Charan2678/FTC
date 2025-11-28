@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - FTC Marketplace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5a623 0%, #f76b1c 50%, #4CAF50 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            display: flex;
+            max-width: 1100px;
+            width: 100%;
+            min-height: 700px;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Left Side - Signup Form */
+        .signup-form-section {
+            flex: 1;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+            overflow-y: auto;
+            max-height: 700px;
+        }
+
+        .signup-header {
+            margin-bottom: 30px;
+        }
+
+        .signup-header h3 {
+            font-size: 14px;
+            color: #999;
+            font-weight: 400;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .signup-header h1 {
+            font-size: 32px;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            font-size: 16px;
+        }
+
+        .btn-signup {
+            width: 100%;
+            padding: 14px;
+            background: #2d5f3f;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: capitalize;
+            margin-top: 10px;
+        }
+
+        .btn-signup:hover {
+            background: #1b4b2f;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 95, 63, 0.3);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: #999;
+            font-size: 13px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: #444;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .btn-google:hover {
+            background: #f8f9fa;
+            border-color: #4CAF50;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-prompt {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .login-prompt p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .login-prompt a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .login-prompt a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Right Side - Illustration */
+        .signup-illustration-section {
+            flex: 1;
+            background: linear-gradient(135deg, #2d5f3f 0%, #4CAF50 100%);
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signup-illustration-section::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            top: -100px;
+            right: -100px;
+        }
+
+        .signup-illustration-section::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            bottom: -80px;
+            left: -80px;
+        }
+
+        .illustration-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+        }
+
+        .illustration-icon {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .illustration-icon i {
+            font-size: 70px;
+            color: white;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .illustration-content h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .illustration-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.95;
+            max-width: 350px;
+            margin: 0 auto 30px;
+        }
+
+        .feature-list {
+            text-align: left;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .feature-item i {
+            margin-right: 12px;
+            font-size: 20px;
+            color: #FFD700;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .signup-container {
+                flex-direction: column;
+                border-radius: 20px;
+            }
+
+            .signup-illustration-section {
+                order: -1;
+                padding: 40px 30px;
+                min-height: 300px;
+            }
+
+            .signup-form-section {
+                padding: 40px 30px;
+                max-height: none;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .signup-header h1 {
+                font-size: 26px;
+            }
+
+            .illustration-content h2 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .signup-form-section {
+                padding: 30px 20px;
+            }
+
+            .signup-illustration-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <!-- Left Side - Signup Form -->
+        <div class="signup-form-section">
+            <div class="signup-header">
+                <h3>Join Us Today</h3>
+                <h1>Create Account</h1>
+            </div>
+
+            <!-- Google Sign-Up Button -->
+            <button type="button" class="btn-google" onclick="handleGoogleSignUp()">
+                <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z" fill="#4285F4"/>
+                    <path d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z" fill="#34A853"/>
+                    <path d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z" fill="#FBBC05"/>
+                    <path d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z" fill="#EA4335"/>
+                </svg>
+                Sign up with Google
+            </button>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <form action="/users/add" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% if messages %}
+                    <div class="alert alert-success">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% if error == True %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+                {% endif %}
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user_name">Full Name</label>
+                        <input type="text" class="form-control" id="user_name" name="user_name" placeholder="Enter your full name" required autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user_username">Username</label>
+                        <input type="text" class="form-control" id="user_username" name="user_username" placeholder="Choose a username" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user_email">Email Address</label>
+                        <input type="email" class="form-control" id="user_email" name="user_email" placeholder="your@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user_mobile">Mobile Number</label>
+                        <input type="tel" class="form-control" id="user_mobile" name="user_mobile" placeholder="10-digit mobile" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user_password">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" class="form-control" id="user_password" name="user_password" placeholder="Create password" required>
+                            <i class="fa fa-eye password-toggle" onclick="togglePassword('user_password')"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user_confirm_password">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" class="form-control" id="user_confirm_password" name="user_confirm_password" placeholder="Re-enter password" required>
+                            <i class="fa fa-eye password-toggle" onclick="togglePassword('user_confirm_password')"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_add1">Address Line 1</label>
+                    <input type="text" class="form-control" id="user_add1" name="user_add1" placeholder="Street address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_add2">Address Line 2</label>
+                    <input type="text" class="form-control" id="user_add2" name="user_add2" placeholder="Apartment, suite, etc. (optional)">
+                </div>
+
+                <button type="submit" class="btn-signup">Create Account</button>
+
+                <input type="hidden" name="act" value="save_user">
+                <input type="hidden" name="user_level_id" value="2">
+            </form>
+
+            <div class="login-prompt">
+                <p>Already have an account? <a href="/users/">Log in</a></p>
+            </div>
+        </div>
+
+        <!-- Right Side - Illustration -->
+        <div class="signup-illustration-section">
+            <div class="illustration-content">
+                <div class="illustration-icon">
+                    <i class="fa fa-seedling"></i>
+                </div>
+
+                <h2>Welcome to FTC!</h2>
+                <p>Join our community of farmers and customers for fresh, organic products directly from farm to table.</p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>Fresh organic products</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>Direct from farmers</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>Best prices guaranteed</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span>Fast & safe delivery</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            const toggleIcon = passwordInput.nextElementSibling;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Google Sign-Up Handler
+        function handleGoogleSignUp() {
+            // Redirect to Google OAuth login (same flow, will create account if needed)
+            window.location.href = '/users/google-login/';
+        }
+    </script>
+
+    <!-- Google Sign-In SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</body>
+</html>

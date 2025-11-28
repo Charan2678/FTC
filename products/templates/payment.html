@@ -1,0 +1,236 @@
+{% extends 'base.html' %} 
+{% block content %}
+<script>
+jQuery(function() {
+	jQuery( "#payment_date" ).datepicker({
+	  changeMonth: true,
+	  changeYear: true,
+	   yearRange: "0:+1",
+	   dateFormat: 'd MM,yy'
+	});
+	
+	// Toggle payment fields based on payment method
+	jQuery('input[name="payment_method"]').change(function() {
+		if(jQuery(this).val() == 'cod') {
+			jQuery('#card-payment-section').hide();
+			jQuery('#cod-section').show();
+			// Remove required from card fields
+			jQuery('#card-payment-section input, #card-payment-section select').prop('required', false);
+		} else {
+			jQuery('#card-payment-section').show();
+			jQuery('#cod-section').hide();
+			// Add required to card fields
+			jQuery('#card-payment-section input, #card-payment-section select').prop('required', true);
+		}
+	});
+	
+	// Set initial state - card fields required by default
+	jQuery('#card-payment-section input, #card-payment-section select').prop('required', true);
+});
+</script>
+
+<style>
+.payment-method-selection {
+	background: white;
+	padding: 20px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+	border: 1px solid #c8e6c9;
+}
+.payment-option {
+	display: inline-block;
+	margin: 10px 20px 10px 0;
+	padding: 15px 25px;
+	border: 2px solid #ddd;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+.payment-option:hover {
+	border-color: #4CAF50;
+	background: #e8f5e9;
+}
+.payment-option input[type="radio"] {
+	margin-right: 10px;
+}
+.payment-option label {
+	cursor: pointer;
+	font-weight: 500;
+	margin: 0;
+}
+.delivery-address {
+	background: white;
+	padding: 20px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+	border: 1px solid #c8e6c9;
+}
+#cod-section {
+	display: none;
+	background: #e8f5e9;
+	padding: 20px;
+	border-radius: 8px;
+	border: 1px solid #4CAF50;
+}
+</style>
+
+    <!--breadcrumbs start-->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-sm-4">
+                    <h1>Checkout & Payment</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--breadcrumbs end-->
+
+    <!--container start-->
+    <div class="container w" style="background: #e8f5e9; padding: 30px 0;">
+		<div class="row centered">
+		<div class="col-sm-8">
+		<div style="clear:both"></div>
+			<form class="form-horizontal" method="post" action="">
+					{% csrf_token %}
+					
+					<!-- Delivery Address Section -->
+					<div class="delivery-address">
+						<h3 style="color: #4CAF50; margin-bottom: 20px;"><i class="fa fa-map-marker"></i> Delivery Address</h3>
+						{% if userDetails %}
+						<div class="well" style="background: #f1f8f4; border: 1px solid #c8e6c9;">
+							<p><strong>Name:</strong> {{ userDetails.user_name }}</p>
+							<p><strong>Address:</strong> {{ userDetails.user_add1 }}, {{ userDetails.user_add2 }}</p>
+							<p><strong>City:</strong> {{ userDetails.city_name }}</p>
+							<p><strong>State:</strong> {{ userDetails.state_name }}</p>
+							<p><strong>Country:</strong> {{ userDetails.country_name }}</p>
+							<p><strong>Mobile:</strong> {{ userDetails.user_mobile }}</p>
+							<p><strong>Email:</strong> {{ userDetails.user_email }}</p>
+						</div>
+						<p style="margin-top:10px;"><a href="/users/update/{{ request.session.user_id }}/" class="btn btn-success"><i class="fa fa-edit"></i> Update Address</a></p>
+						{% else %}
+						<div class="alert alert-warning">
+							<strong>Please add your delivery address!</strong>
+							<a href="/users/update/{{ request.session.user_id }}/" class="btn btn-primary" style="margin-left:10px;">Add Address Now</a>
+						</div>
+						{% endif %}
+					</div>
+					
+					<!-- Payment Method Selection -->
+					<div class="payment-method-selection">
+						<h3 style="color: #4CAF50; margin-bottom: 20px;"><i class="fa fa-credit-card"></i> Select Payment Method</h3>
+						<div class="payment-option">
+							<label>
+								<input type="radio" name="payment_method" value="card" checked>
+								<i class="fa fa-credit-card"></i> Online Payment (Card)
+							</label>
+						</div>
+						<div class="payment-option">
+							<label>
+								<input type="radio" name="payment_method" value="cod">
+								<i class="fa fa-money"></i> Cash on Delivery (COD)
+							</label>
+						</div>
+					</div>
+					
+					<!-- Card Payment Section -->
+					<div id="card-payment-section">
+								 <div><img src="/assets/img/payment.png" style="width:500px; margin-bottom:20px;"></div>
+								  <div class="form-group">
+                                      <label class="col-sm-2 control-label">Name of Card</label>
+                                      <div class="col-sm-10">
+                                          <input type="text" class="form-control" name="card_name" id="card_name">
+                                      </div>
+                                  </div>
+                                  <div class="form-group">
+                                      <label class="col-sm-2 control-label">Card No</label>
+                                      <div class="col-sm-10">
+                                          <input type="text" class="form-control" name="card_number" id="card_number">
+                                      </div>
+                                  </div>
+								  <div class="form-group">
+									<label class="control-label col-sm-2" for="email">Card Type : </label>
+									<div class="col-sm-10">
+									  <select class="form-control" id="card_type" name="card_type">
+										  <option value="0">Please Select</option>
+										  <option value="1">Master Card</option>
+										  <option value="2">Visa Card</option>
+										  <option value="3">Mastero Card</option>
+										  <option value="4">American Express</option>
+									  </select>
+									</div>
+								  </div>
+								  <div class="form-group">
+									<label class="control-label col-sm-2" for="email">Card Expiry : </label>
+									<div class="col-sm-10">
+									  <select class="form-control" id="card_month" name="card_month" style="width:150px; float:left; margin-right:10px; ">
+										<option>Month</option>
+										<option>January</option>
+										<option>February</option>
+										<option>March</option>
+										<option>April</option>
+										<option>May</option>
+										<option>June</option>
+										<option>July</option>
+										<option>August</option>
+										<option>September</option>
+										<option>October</option>
+										<option>November</option>
+										<option>December</option>
+									  </select>
+									  <select class="form-control" id="card_year" name="card_year" style="width:150px; float:left; ">
+										<option>Year</option>
+											<option>2024</option>
+											<option>2025</option>
+											<option>2026</option>
+											<option>2027</option>
+											<option>2028</option>
+											<option>2029</option>
+											<option>2030</option>
+									  </select>
+									</div>
+								  </div>
+								  <div class="form-group">
+                                      <label class="col-sm-2 control-label">Amount</label>
+                                      <div class="col-sm-10">
+                                          <input type="text" class="form-control" required name="order_amount" value="₹{{orderTotal.TotalCartValue}}0/-" readonly style="font-size:18px; font-weight:bold; color:#4CAF50;">
+                                      </div>
+                                  </div>
+					</div>
+					
+					<!-- Cash on Delivery Section -->
+					<div id="cod-section">
+						<h4 style="color: #4CAF50; margin-bottom: 15px;"><i class="fa fa-money"></i> Cash on Delivery</h4>
+						<div class="alert alert-info">
+							<i class="fa fa-info-circle"></i> You have selected <strong>Cash on Delivery</strong> payment method.
+							<br>Please keep exact cash ready at the time of delivery.
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Total Amount to Pay:</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" value="₹{{orderTotal.TotalCartValue}}0/-" readonly style="font-size:18px; font-weight:bold; color:#4CAF50;">
+							</div>
+						</div>
+					</div>
+					
+                    <div class="form-group" style="margin-top: 30px;"> 
+						<label class="control-label col-sm-2" for="email"></label>
+						<div class="col-sm-8" style="text-align:left;">
+							<button type="submit" class="btn btn-success btn-lg" style="width:200px; padding:12px;">
+								<i class="fa fa-check-circle"></i> Place Order
+							</button>
+						</div>
+					</div>
+			  <input type="hidden" name="act" value="save_order">
+			  <input type="hidden" name="order_meal_id" value="<?=$_REQUEST[meal_id]?>">
+			</form>
+			</div>
+			<div class="col-sm-3" style="margin-bottom:10px;">
+				<div>
+					<img src="/assets/img/payment1.jpg" style="width:250px;">
+					<img src="/assets/img/payment.jpg" style="width:250px;">
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

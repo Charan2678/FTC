@@ -1,0 +1,609 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+/* Hero Banner Section */
+.ftc-hero-banner {
+    background: linear-gradient(to right, rgba(46, 125, 50, 0.92), rgba(76, 175, 80, 0.88)), 
+                url('/assets/img/parallax-slider/images/Logo home.png') center/cover;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.ftc-hero-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, #f8fdf8);
+}
+
+.ftc-hero-content {
+    text-align: center;
+    color: white;
+    z-index: 10;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.ftc-hero-title {
+    font-size: 3.8rem;
+    font-weight: 800;
+    margin-bottom: 25px;
+    text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.4);
+    line-height: 1.2;
+}
+
+.ftc-hero-tagline {
+    font-size: 1.6rem;
+    font-weight: 300;
+    margin-bottom: 35px;
+    color: #e8f5e9;
+    letter-spacing: 0.5px;
+}
+
+.ftc-hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.ftc-btn-hero {
+    padding: 16px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 3px solid white;
+}
+
+.ftc-btn-shop {
+    background: white;
+    color: #2d5f3f;
+}
+
+.ftc-btn-shop:hover {
+    background: #66BB6A;
+    color: white;
+    border-color: #66BB6A;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.ftc-btn-join {
+    background: transparent;
+    color: white;
+}
+
+.ftc-btn-join:hover {
+    background: white;
+    color: #2d5f3f;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Welcome Section */
+.ftc-welcome-section {
+    padding: 80px 0;
+    background: #f8fdf8;
+}
+
+.ftc-section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.ftc-section-title {
+    font-size: 3rem;
+    color: #1b5e20;
+    font-weight: 700;
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.ftc-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, #4CAF50, #66BB6A);
+    border-radius: 2px;
+}
+
+.ftc-section-subtitle {
+    font-size: 1.2rem;
+    color: #558b2f;
+    margin-top: 25px;
+}
+
+/* Features Grid */
+.ftc-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 35px;
+    margin-top: 50px;
+}
+
+.ftc-feature-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.ftc-feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.ftc-feature-card:hover::before {
+    left: 100%;
+}
+
+.ftc-feature-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 20px 45px rgba(76, 175, 80, 0.25);
+    border-color: #4CAF50;
+}
+
+.ftc-feature-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 25px;
+    background: linear-gradient(135deg, #66BB6A, #4CAF50);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.35);
+    transition: all 0.4s ease;
+}
+
+.ftc-feature-card:hover .ftc-feature-icon-wrapper {
+    transform: rotate(360deg) scale(1.1);
+    box-shadow: 0 12px 35px rgba(76, 175, 80, 0.5);
+}
+
+.ftc-feature-icon-wrapper i {
+    font-size: 2.8rem;
+    color: white;
+}
+
+.ftc-feature-title {
+    font-size: 1.6rem;
+    color: #1b5e20;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.ftc-feature-desc {
+    color: #558b2f;
+    line-height: 1.7;
+    font-size: 1.05rem;
+}
+
+/* Stats Section */
+.ftc-stats-section {
+    background: linear-gradient(135deg, #2d5f3f, #4CAF50);
+    padding: 70px 0;
+    color: white;
+}
+
+.ftc-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+    text-align: center;
+}
+
+.ftc-stat-item {
+    padding: 20px;
+}
+
+.ftc-stat-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 10px;
+    color: #a5d6a7;
+}
+
+.ftc-stat-label {
+    font-size: 1.2rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* How It Works Section */
+.ftc-how-section {
+    padding: 80px 0;
+    background: white;
+}
+
+.ftc-steps-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-top: 50px;
+    position: relative;
+}
+
+.ftc-step-card {
+    text-align: center;
+    padding: 30px;
+    position: relative;
+}
+
+.ftc-step-number {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+}
+
+.ftc-step-title {
+    font-size: 1.4rem;
+    color: #1b5e20;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.ftc-step-desc {
+    color: #558b2f;
+    line-height: 1.6;
+}
+
+/* CTA Section */
+.ftc-cta-section {
+    background: linear-gradient(135deg, #1b5e20, #388E3C);
+    padding: 80px 20px;
+    text-align: center;
+    color: white;
+}
+
+.ftc-cta-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.ftc-cta-text {
+    font-size: 1.3rem;
+    margin-bottom: 35px;
+    color: #c8e6c9;
+}
+
+.ftc-cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.ftc-btn-cta {
+    padding: 16px 45px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ftc-btn-cta-primary {
+    background: white;
+    color: #1b5e20;
+}
+
+.ftc-btn-cta-primary:hover {
+    background: #a5d6a7;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.ftc-btn-cta-secondary {
+    background: transparent;
+    color: white;
+    border: 3px solid white;
+}
+
+.ftc-btn-cta-secondary:hover {
+    background: white;
+    color: #1b5e20;
+    transform: translateY(-4px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ftc-hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .ftc-hero-tagline {
+        font-size: 1.2rem;
+    }
+    
+    .ftc-section-title {
+        font-size: 2.2rem;
+    }
+    
+    .ftc-features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .ftc-stat-number {
+        font-size: 2.5rem;
+    }
+}
+</style>
+
+<!-- Hero Banner -->
+<section class="ftc-hero-banner">
+    <div class="ftc-hero-content">
+        <h1 class="ftc-hero-title">
+            Connecting Farms to Families
+        </h1>
+        <p class="ftc-hero-tagline">
+            Fresh, Organic Produce Delivered Direct from Local Farmers
+        </p>
+        <div class="ftc-hero-buttons">
+            <a href="/products/" class="ftc-btn-hero ftc-btn-shop">
+                <i class="fa fa-shopping-basket"></i>
+                Explore Fresh Products
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Welcome Section -->
+<section class="ftc-welcome-section">
+    <div class="container">
+        <div class="ftc-section-header">
+            <h2 class="ftc-section-title">Welcome to FTC Marketplace</h2>
+            <p class="ftc-section-subtitle">Bridging the gap between farmers and consumers for a sustainable future</p>
+        </div>
+
+        <div class="ftc-features-grid">
+            <div class="ftc-feature-card">
+                <div class="ftc-feature-icon-wrapper">
+                    <i class="fa fa-leaf"></i>
+                </div>
+                <h3 class="ftc-feature-title">100% Organic</h3>
+                <p class="ftc-feature-desc">
+                    All products are naturally grown without harmful chemicals or pesticides, ensuring your family's health and safety.
+                </p>
+            </div>
+
+            <div class="ftc-feature-card">
+                <div class="ftc-feature-icon-wrapper">
+                    <i class="fa fa-truck"></i>
+                </div>
+                <h3 class="ftc-feature-title">Fresh Delivery</h3>
+                <p class="ftc-feature-desc">
+                    Products are harvested and delivered within 24 hours, guaranteeing maximum freshness and nutritional value.
+                </p>
+            </div>
+
+            <div class="ftc-feature-card">
+                <div class="ftc-feature-icon-wrapper">
+                    <i class="fa fa-handshake"></i>
+                </div>
+                <h3 class="ftc-feature-title">Fair Trade</h3>
+                <p class="ftc-feature-desc">
+                    Direct connection between farmers and consumers ensures fair prices for both parties, eliminating middlemen.
+                </p>
+            </div>
+
+            <div class="ftc-feature-card">
+                <div class="ftc-feature-icon-wrapper">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h3 class="ftc-feature-title">Quality Assured</h3>
+                <p class="ftc-feature-desc">
+                    Every product undergoes strict quality checks to ensure you receive only the finest agricultural produce.
+                </p>
+            </div>
+
+            <div class="ftc-feature-card">
+                <div class="ftc-feature-icon-wrapper">
+                    <i class="fa fa-tag"></i>
+                </div>
+                <h3 class="ftc-feature-title">Best Pricing</h3>
+                <p class="ftc-feature-desc">
+                    By removing intermediaries, we offer competitive prices that benefit both farmers and customers.
+                </p>
+            </div>
+
+            <div class="ftc-feature-card">
+                <div class="ftc-feature-icon-wrapper">
+                    <i class="fa fa-recycle"></i>
+                </div>
+                <h3 class="ftc-feature-title">Eco-Friendly</h3>
+                <p class="ftc-feature-desc">
+                    We promote sustainable farming practices and use biodegradable packaging to protect our environment.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="ftc-stats-section">
+    <div class="container">
+        <div class="ftc-stats-grid">
+            <div class="ftc-stat-item">
+                <span class="ftc-stat-number">500+</span>
+                <span class="ftc-stat-label">Active Farmers</span>
+            </div>
+            <div class="ftc-stat-item">
+                <span class="ftc-stat-number">5000+</span>
+                <span class="ftc-stat-label">Happy Customers</span>
+            </div>
+            <div class="ftc-stat-item">
+                <span class="ftc-stat-number">200+</span>
+                <span class="ftc-stat-label">Fresh Products</span>
+            </div>
+            <div class="ftc-stat-item">
+                <span class="ftc-stat-number">50+</span>
+                <span class="ftc-stat-label">Locations</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="ftc-how-section">
+    <div class="container">
+        <div class="ftc-section-header">
+            <h2 class="ftc-section-title">How FTC Works</h2>
+            <p class="ftc-section-subtitle">Simple steps to get fresh farm products at your doorstep</p>
+        </div>
+
+        <div class="ftc-steps-container">
+            <div class="ftc-step-card">
+                <div class="ftc-step-number">1</div>
+                <h3 class="ftc-step-title">Browse Products</h3>
+                <p class="ftc-step-desc">
+                    Explore our wide range of fresh vegetables, fruits, and organic produce from local farmers.
+                </p>
+            </div>
+
+            <div class="ftc-step-card">
+                <div class="ftc-step-number">2</div>
+                <h3 class="ftc-step-title">Place Order</h3>
+                <p class="ftc-step-desc">
+                    Select your favorite products, add them to cart, and checkout with your preferred payment method.
+                </p>
+            </div>
+
+            <div class="ftc-step-card">
+                <div class="ftc-step-number">3</div>
+                <h3 class="ftc-step-title">Get Delivered</h3>
+                <p class="ftc-step-desc">
+                    Receive farm-fresh products at your doorstep within 24 hours of harvest.
+                </p>
+            </div>
+
+            <div class="ftc-step-card">
+                <div class="ftc-step-number">4</div>
+                <h3 class="ftc-step-title">Enjoy Fresh</h3>
+                <p class="ftc-step-desc">
+                    Enjoy healthy, organic produce knowing you've supported local farmers directly.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="ftc-cta-section">
+    <div class="container">
+        <h2 class="ftc-cta-title">Ready to Experience Farm-Fresh Goodness?</h2>
+        <p class="ftc-cta-text">Join thousands of satisfied customers who trust FTC for their daily fresh needs</p>
+        <div class="ftc-cta-buttons">
+            <a href="/users/add" class="ftc-btn-cta ftc-btn-cta-primary">
+                <i class="fa fa-user-plus"></i>
+                Register Now
+            </a>
+            <a href="/users/" class="ftc-btn-cta ftc-btn-cta-secondary">
+                <i class="fa fa-sign-in-alt"></i>
+                Login to Account
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- <div class="feature-box">
+            <div class="col-md-4 col-sm-4 text-center wow fadeInUp">
+              <div class="feature-box-heading">
+                <em>
+                  <img src="/assets/img/3.jpg" alt="" style="width:350px; height:180px;">
+                </em>
+                <h4>
+                  <b>Customer Management System</b>
+                </h4>
+              </div>
+              <p class="text-center">
+                A typical online store enables the customer to browse the firm's range of products and services, view photos or images of the products
+              </p>
+            </div> -->
+          </div>
+
+          <!--feature end-->
+        </div>
+      </div>
+    </div>
+
+
+    <!--property start-->
+    <div class="property gray-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-sm-6 text-center wow fadeInLeft">
+            <!-- <img src="/assets/img/p3.jpg" alt="" style="height:335px"> -->
+            <img src="assets/img/p3.jpg" alt="" style="height:335px">
+          </div>
+          <div class="col-lg-6 col-sm-6 wow fadeInRight">
+            <h1>
+              About FARMER TO CONSUMER
+            </h1>
+            <hr>
+            <p>Farmer-to-Consumer E-commerce is a digital marketplace that connects farmers directly with consumers, eliminating intermediaries and creating a more efficient and sustainable food supply chain. Consumers can easily browse and purchase fresh, locally grown produce online, bypassing traditional distribution channels.</p>
+            <p></p>
+            <hr>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--property end-->
+    <script type="text/javascript" src="/assets/js/parallax-slider/jquery.cslider.js"></script>
+	<script type="text/javascript">
+		  $(function() {
+
+			$('#da-slider').cslider({
+			  autoplay    : true,
+			  bgincrement : 100
+			});
+
+		  });
+	</script>
+  {% endblock content %}
+

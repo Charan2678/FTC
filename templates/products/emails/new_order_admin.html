@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>New Order Alert - Fresh to Cart Admin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .alert-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .order-summary {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .customer-info {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .item-details {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .item-price {
+            font-weight: 600;
+            color: #e74c3c;
+        }
+        
+        .total-amount {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .action-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            margin: 0 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .btn-confirm {
+            background: #27ae60;
+        }
+        
+        .btn-view {
+            background: #3498db;
+        }
+        
+        .priority-high {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        
+        .address-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .footer {
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .timestamp {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 New Order Alert</h1>
+            <span class="alert-badge">IMMEDIATE ACTION REQUIRED</span>
+        </div>
+        
+        <div class="content">
+            <h2 style="color: #e74c3c;">New Order Received!</h2>
+            <p>A new order has been placed and requires your immediate attention.</p>
+            
+            <div class="order-summary">
+                <h3 style="margin-top: 0; color: #2c3e50;">📋 Order Information</h3>
+                <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+                <p><strong>Order Time:</strong> {{ order.created_at|date:"F d, Y H:i" }}</p>
+                <p><strong>Status:</strong> <span style="background: #f39c12; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">{{ order.get_order_status_display }}</span></p>
+                <p><strong>Payment Method:</strong> {{ order.payment_method.get_payment_type_display }}</p>
+                <p><strong>Payment Status:</strong> 
+                    <span style="background: {% if order.payment_status == 'completed' %}#27ae60{% else %}#f39c12{% endif %}; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">
+                        {{ order.get_payment_status_display }}
+                    </span>
+                </p>
+                <div class="timestamp">Order placed {{ order.created_at|timesince }} ago</div>
+            </div>
+            
+            <div class="customer-info">
+                <h3 style="margin-top: 0; color: #27ae60;">👤 Customer Details</h3>
+                <p><strong>Name:</strong> {{ order.user.first_name }} {{ order.user.last_name }}</p>
+                <p><strong>Email:</strong> {{ order.user.email }}</p>
+                <p><strong>Phone:</strong> {{ order.delivery_address.phone_number }}</p>
+                <p><strong>Username:</strong> {{ order.user.username }}</p>
+            </div>
+            
+            <h3 style="color: #2c3e50;">📦 Items to Prepare</h3>
+            {% for item in order.items.all %}
+            <div class="order-item">
+                <div>
+                    <div class="item-name">{{ item.product.product_name }}</div>
+                    <div class="item-details">
+                        Quantity: <strong>{{ item.quantity }}</strong> × ₹{{ item.price_at_time }}
+                        {% if item.product.company %}
+                        <br>Company: {{ item.product.company.company_name }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="item-price">
+                    ₹{{ item.get_subtotal }}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="total-amount">
+                <h3 style="margin: 0;">💰 Total Order Value: ₹{{ order.total_amount }}</h3>
+                <p style="margin: 5px 0 0 0; opacity: 0.8;">
+                    Subtotal: ₹{{ order.subtotal }} | Delivery: ₹{{ order.delivery_charge }} | GST: ₹{{ order.tax_amount }}
+                    {% if order.discount_amount > 0 %} | Discount: ₹{{ order.discount_amount }}{% endif %}
+                </p>
+            </div>
+            
+            <div class="address-box">
+                <h4 style="margin-top: 0; color: #856404;">🚚 Delivery Address</h4>
+                <p style="margin: 0; color: #856404;">
+                    <strong>{{ order.delivery_address.full_name }}</strong><br>
+                    {{ order.delivery_address.address_line1 }}<br>
+                    {% if order.delivery_address.address_line2 %}{{ order.delivery_address.address_line2 }}<br>{% endif %}
+                    {{ order.delivery_address.city }}, {{ order.delivery_address.state }} - {{ order.delivery_address.pincode }}<br>
+                    📞 {{ order.delivery_address.phone_number }}
+                </p>
+            </div>
+            
+            <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; padding: 15px; margin: 20px 0;">
+                <h4 style="margin-top: 0; color: #155724;">⚡ Action Items</h4>
+                <ul style="margin: 0; color: #155724;">
+                    <li>Confirm product availability</li>
+                    <li>Update order status to "Processing"</li>
+                    <li>Prepare items for dispatch</li>
+                    <li>Send shipping confirmation to customer</li>
+                    {% if order.payment_method.payment_type == 'cod' %}
+                    <li><strong>COD Order</strong> - Collect ₹{{ order.total_amount }} on delivery</li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="http://127.0.0.1:8000/admin/products/order/{{ order.id }}/change/" class="btn btn-view">
+                    📋 Manage Order
+                </a>
+                <a href="http://127.0.0.1:8000/orders/{{ order.order_id }}/" class="btn btn-confirm">
+                    ✅ View Details
+                </a>
+            </div>
+            
+            {% if order.payment_method.payment_type == 'cod' %}
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 15px; margin: 20px 0; text-align: center;">
+                <h4 style="margin-top: 0; color: #856404;">💵 Cash on Delivery</h4>
+                <p style="margin: 0; color: #856404;">
+                    <strong>Amount to collect: ₹{{ order.total_amount }}</strong><br>
+                    Ensure exact change is available for delivery.
+                </p>
+            </div>
+            {% endif %}
+            
+            <div style="border-top: 2px solid #ecf0f1; padding-top: 20px; margin-top: 30px; color: #7f8c8d; font-size: 14px;">
+                <p><strong>Next Steps:</strong></p>
+                <ol>
+                    <li>Log into admin panel to confirm order</li>
+                    <li>Check inventory and prepare items</li>
+                    <li>Update order status to keep customer informed</li>
+                    <li>Arrange pickup/delivery as per schedule</li>
+                </ol>
+            </div>
+            
+            <p style="color: #e74c3c; font-weight: 600;">
+                ⏰ Time is critical! Please process this order within 2 hours to maintain customer satisfaction.
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Fresh to Cart Admin Panel</strong></p>
+            <p>This alert was sent to: charanneerukonda7@gmail.com</p>
+            <p>Order Time: {{ order.created_at|date:"F d, Y H:i:s" }}</p>
+        </div>
+    </div>
+</body>
+</html>

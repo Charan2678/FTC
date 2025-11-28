@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Diagnostic Tool</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .diagnostic-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .instructions {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .instructions h3 {
+            color: #495057;
+            margin-top: 0;
+        }
+        .instructions ol {
+            line-height: 1.6;
+        }
+        .instructions code {
+            background: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Email Diagnostic Tool</h1>
+            <p>Troubleshoot email delivery issues and test Gmail configuration</p>
+        </div>
+
+        <div class="diagnostic-section info">
+            <h3>📊 Current Status</h3>
+            <p><strong>Email Backend:</strong> {{ request.resolver_match.func.__module__ }}</p>
+            <p><strong>Server Status:</strong> <span id="server-status">Connected</span></p>
+            <p><strong>Current Time:</strong> <span id="current-time"></span></p>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>🔍 Email System Tests</h3>
+            <button onclick="runEmailDiagnostic()" id="diagnostic-btn">
+                Run Complete Email Diagnostic
+            </button>
+            <button onclick="testOrderEmail()" id="order-test-btn">
+                Test Order Email Notification
+            </button>
+            <button onclick="checkConsoleOutput()" id="console-btn">
+                Check Console Output
+            </button>
+        </div>
+
+        <div id="results" class="results"></div>
+
+        <div class="instructions">
+            <h3>📋 Gmail App Password Setup Instructions</h3>
+            <p>If emails are not being delivered to Gmail, you need to configure App Password authentication:</p>
+            <ol>
+                <li>Go to <a href="https://myaccount.google.com/security" target="_blank">Google Account Security</a></li>
+                <li>Enable <strong>2-Step Verification</strong> if not already enabled</li>
+                <li>Click on <strong>"App passwords"</strong></li>
+                <li>Select <strong>"Mail"</strong> and <strong>"Other (Custom name)"</strong></li>
+                <li>Enter <code>Django FTC App</code> as the name</li>
+                <li>Copy the 16-character password generated</li>
+                <li>Update <code>FTC/settings.py</code>:</li>
+            </ol>
+            <pre>EMAIL_HOST_PASSWORD = 'your-16-character-app-password'  # Replace with generated password
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Switch back to SMTP</pre>
+        </div>
+    </div>
+
+    <script>
+        function updateTime() {
+            document.getElementById('current-time').textContent = new Date().toLocaleString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        async function runEmailDiagnostic() {
+            const btn = document.getElementById('diagnostic-btn');
+            btn.textContent = 'Running Diagnostic...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({action: 'diagnostic'})
+                });
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                displayResults({
+                    success: false,
+                    error: 'Failed to run diagnostic: ' + error.message
+                });
+            } finally {
+                btn.textContent = 'Run Complete Email Diagnostic';
+                btn.disabled = false;
+            }
+        }
+
+        async function testOrderEmail() {
+            const btn = document.getElementById('order-test-btn');
+            btn.textContent = 'Testing Order Email...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/products/test-email-notifications/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                displayResults({
+                    success: false,
+                    error: 'Failed to test order email: ' + error.message
+                });
+            } finally {
+                btn.textContent = 'Test Order Email Notification';
+                btn.disabled = false;
+            }
+        }
+
+        function checkConsoleOutput() {
+            displayResults({
+                success: true,
+                message: 'Console output check - Look at your terminal/command prompt where Django server is running. If EMAIL_BACKEND is set to console, you should see email content printed there when emails are sent.',
+                backend: 'Check terminal output for email content'
+            });
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            let html = '<div class="diagnostic-section ' + (data.success ? 'success' : 'error') + '">';
+            html += '<h3>' + (data.success ? '✅ Diagnostic Results' : '❌ Diagnostic Error') + '</h3>';
+            
+            if (data.results) {
+                html += '<pre>' + JSON.stringify(data.results, null, 2) + '</pre>';
+            }
+            
+            if (data.message) {
+                html += '<p>' + data.message + '</p>';
+            }
+            
+            if (data.error) {
+                html += '<p><strong>Error:</strong> ' + data.error + '</p>';
+            }
+
+            if (data.backend) {
+                html += '<p><strong>Email Backend:</strong> ' + data.backend + '</p>';
+            }
+
+            if (data.console_mode) {
+                html += '<div class="warning">⚠️ Console mode active - Check terminal output for email content</div>';
+            }
+            
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

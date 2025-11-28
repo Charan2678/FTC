@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart Test</title>
+</head>
+<body>
+    <h1>Cart Test</h1>
+    <form method="post" action="http://127.0.0.1:8000/products/cart/add/">
+        <input type="hidden" name="csrfmiddlewaretoken" value="test-token">
+        <input type="hidden" name="product_id" value="9">
+        <label>Quantity:</label>
+        <select name="quantity">
+            <option value="1">1 Item</option>
+            <option value="2">2 Items</option>
+        </select>
+        <br><br>
+        <button type="submit">Add to Cart</button>
+    </form>
+
+    <script>
+        // Test with JavaScript fetch
+        function testFetch() {
+            fetch('http://127.0.0.1:8000/products/cart/add/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'product_id=9&quantity=1&csrfmiddlewaretoken=test-token'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response:', data);
+                alert(JSON.stringify(data));
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error: ' + error);
+            });
+        }
+    </script>
+    
+    <br><br>
+    <button onclick="testFetch()">Test with JavaScript</button>
+</body>
+</html>

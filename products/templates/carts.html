@@ -1,0 +1,258 @@
+{% extends 'base.html' %} 
+{% block content %}
+<style>
+.cart-container {
+    padding: 30px 0;
+}
+.cart-header {
+    background: linear-gradient(135deg, #4CAF50 0%, #2d5f3f 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 0;
+}
+.cart-header h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+}
+.cart-table {
+    background: white;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.cart-table table {
+    margin-bottom: 0;
+}
+.cart-table th {
+    background-color: #2d5f3f !important;
+    color: white !important;
+    font-weight: 600;
+    padding: 15px 10px !important;
+    border: none !important;
+}
+.cart-table td {
+    padding: 15px 10px !important;
+    vertical-align: middle !important;
+}
+.cart-product-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 3px solid #4CAF50;
+}
+.cart-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.cart-empty i {
+    font-size: 80px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+.cart-empty h3 {
+    color: #666;
+    margin-bottom: 20px;
+}
+.cart-total-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-top: 3px solid #4CAF50;
+}
+.cart-total {
+    font-size: 24px;
+    color: #2d5f3f;
+    font-weight: bold;
+}
+.btn-checkout {
+    background: linear-gradient(135deg, #4CAF50 0%, #2d5f3f 100%);
+    border: none;
+    color: white;
+    padding: 12px 40px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.3s;
+}
+.btn-checkout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    color: white;
+}
+.btn-continue {
+    background: white;
+    border: 2px solid #4CAF50;
+    color: #4CAF50;
+    padding: 12px 40px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.3s;
+}
+.btn-continue:hover {
+    background: #4CAF50;
+    color: white;
+}
+.btn-delete-item {
+    background: #dc3545;
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+.btn-delete-item:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+}
+.quantity-badge {
+    background: #e8f5e9;
+    color: #2d5f3f;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: 600;
+}
+</style>
+
+<script>
+$(document).on("click", ".delete-dialog", function () {
+  var id = $(this).data('id');
+	$("#recordID").val( id );
+});
+function delete_record(product_id)
+{
+	location.href = "/products/cart-delete/"+$("#recordID").val();
+}
+</script>
+
+    <!--breadcrumbs start-->
+    <div class="breadcrumbs">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-sm-4">
+            <h1>
+              <i class="fa fa-shopping-cart"></i> Shopping Cart
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- //breadcrumbs -->
+
+<div class="cart-container">
+    <div class="container">
+		<div class="row">
+			{% if messages %}
+				<div class="alert alert-success fade in" style="margin:10px;">
+					{% for message in messages %}
+						<strong>{{ message }}</strong>
+					{% endfor %}
+				</div>
+		  {% endif %}
+		  
+		  <div class="col-lg-12">
+		    {% if productlist %}
+			<div class="cart-header">
+			    <h2><i class="fa fa-shopping-basket"></i> Your Shopping Cart ({{ productlist|length }} items)</h2>
+			</div>
+			
+			<form name="frm" action="lib/product.php" method="post">
+			  <div class="cart-table">
+					<table class="table table-hover" style="margin-bottom: 0;">
+				   <thead>
+							<tr>
+								<th style="width: 80px;">Sr. No.</th>
+								<th style="width: 120px;">Image</th>
+								<th>Product Name</th>
+								<th>Price/Unit</th>
+								<th>Quantity</th>
+								<th>Total</th>
+								<th style="width: 150px;">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for product in productlist %}
+								<tr>
+									<td style="text-align:center; font-weight:bold; color: #2d5f3f;">{{ forloop.counter }}</td>
+									<td><img src="{{product.product_image}}" class="cart-product-img"></td>
+									<td style="font-weight: 600; color: #333;">{{product.product_name}}</td>
+									<td style="color: #4CAF50; font-weight: 600;">₹ {{product.product_price}}</td>
+									<td><span class="quantity-badge">{{product.oi_cart_quantity}} Items</span></td>
+									<td style="color: #2d5f3f; font-weight: 700; font-size: 16px;">₹ {{product.oi_total}}</td>
+									<td>
+										<a class="delete-dialog btn-delete-item btn" data-id="{{product.oi_id}}" data-toggle="modal" href="#myModal-2">
+										    <i class="fa fa-trash"></i> Remove
+										</a>
+									</td>
+								</tr>
+							{% endfor %}	
+						</tbody>
+					</table>
+					
+					<div class="cart-total-section">
+					    <div class="row">
+					        <div class="col-md-12" style="text-align: right;">
+					            <span class="cart-total">Total Amount: ₹ {{totalCost.totalCartCost}}</span>
+					        </div>
+					    </div>
+					    <div class="row" style="margin-top: 20px;">
+					        <div class="col-md-12" style="text-align: right;">
+					            <a href="/products" class="btn-continue btn">
+					                <i class="fa fa-arrow-left"></i> Continue Shopping
+					            </a>
+					            <a href="payment" class="btn-checkout btn" style="margin-left:10px;">
+					                <i class="fa fa-check-circle"></i> Proceed to Checkout
+					            </a>
+					        </div>
+					    </div>
+					</div>
+				</div>
+			<input type="hidden" name="act" />
+			  <input type="hidden" name="oi_id" id="recordID" />
+	</form>
+	
+	{% else %}
+	    <!-- Empty Cart -->
+	    <div class="cart-empty">
+	        <i class="fa fa-shopping-cart"></i>
+	        <h3>Your cart is empty!</h3>
+	        <p style="color: #999; margin-bottom: 30px;">Looks like you haven't added any items to your cart yet.</p>
+	        <a href="/products" class="btn-checkout btn">
+	            <i class="fa fa-leaf"></i> Start Shopping
+	        </a>
+	    </div>
+	{% endif %}
+</div>
+</div>
+</div>
+</div>
+
+<!-- Delete Modal -->
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal-2" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #dc3545; color: white;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white;">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-trash"></i> Remove Item</h4>
+            </div>
+            <div class="modal-body" style="padding: 30px; text-align: center;">
+                <i class="fa fa-exclamation-triangle" style="font-size: 50px; color: #dc3545; margin-bottom: 20px;"></i>
+                <p style="font-size: 16px; color: #333;">Are you sure you want to remove this item from your cart?</p>
+            </div>
+            <div class="modal-footer" style="text-align: center;">
+                <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+                <button class="btn btn-danger" type="button" onclick="delete_record()">
+                    <i class="fa fa-trash"></i> Yes, Remove It
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

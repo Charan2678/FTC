@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Order Confirmation - Fresh to Cart</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .order-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-details h4 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+        
+        .item-details p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .item-price {
+            font-weight: 600;
+            color: #27ae60;
+        }
+        
+        .total-section {
+            background: #27ae60;
+            color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .address-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .status-badge {
+            background: #27ae60;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 0;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Order Confirmed!</h1>
+            <p>Thank you for your order, {{ customer_name }}!</p>
+        </div>
+        
+        <div class="content">
+            <h2>Hello {{ customer_name }},</h2>
+            <p>Great news! Your order has been confirmed and we're preparing it for delivery.</p>
+            
+            <div class="order-info">
+                <h3 style="margin-top: 0; color: #2c3e50;">Order Details</h3>
+                <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+                <p><strong>Order Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+                <p><strong>Status:</strong> <span class="status-badge">{{ order.get_order_status_display }}</span></p>
+                <p><strong>Payment Method:</strong> {{ order.payment_method.get_payment_type_display }}</p>
+                {% if order.estimated_delivery %}
+                <p><strong>Expected Delivery:</strong> {{ order.estimated_delivery|date:"F d, Y" }}</p>
+                {% endif %}
+            </div>
+            
+            <h3 style="color: #2c3e50;">Items Ordered</h3>
+            {% for item in order.items.all %}
+            <div class="order-item">
+                <div class="item-details">
+                    <h4>{{ item.product.product_name }}</h4>
+                    <p>Quantity: {{ item.quantity }} × ₹{{ item.price_at_time }}</p>
+                </div>
+                <div class="item-price">
+                    ₹{{ item.get_subtotal }}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="total-section">
+                <h3 style="margin: 0;">Total Amount: ₹{{ order.total_amount }}</h3>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">
+                    (Including ₹{{ order.tax_amount }} GST and ₹{{ order.delivery_charge }} delivery charges)
+                </p>
+            </div>
+            
+            <div class="address-section">
+                <h4 style="margin-top: 0; color: #2c3e50;">Delivery Address</h4>
+                <p style="margin: 0;">
+                    <strong>{{ order.delivery_address.full_name }}</strong><br>
+                    {{ order.delivery_address.address_line1 }}<br>
+                    {% if order.delivery_address.address_line2 %}{{ order.delivery_address.address_line2 }}<br>{% endif %}
+                    {{ order.delivery_address.city }}, {{ order.delivery_address.state }} - {{ order.delivery_address.pincode }}<br>
+                    Phone: {{ order.delivery_address.phone_number }}
+                </p>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="http://127.0.0.1:8000/orders/{{ order.order_id }}/" class="btn">Track Your Order</a>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
+                <h4 style="margin-top: 0; color: #856404;">📱 Stay Updated</h4>
+                <p style="margin: 0; color: #856404;">
+                    We'll send you updates as your order progresses. You can also track your order anytime using the link above.
+                </p>
+            </div>
+            
+            <h4 style="color: #2c3e50;">What's Next?</h4>
+            <ul style="color: #7f8c8d;">
+                <li>We'll start preparing your order immediately</li>
+                <li>You'll receive a shipping confirmation once dispatched</li>
+                <li>Track your delivery in real-time</li>
+                <li>Enjoy your fresh products!</li>
+            </ul>
+            
+            <p>If you have any questions, feel free to contact us at 
+               <a href="mailto:charanneerukonda7@gmail.com" style="color: #27ae60;">charanneerukonda7@gmail.com</a>
+            </p>
+            
+            <p style="margin-bottom: 0;">
+                Thank you for choosing Fresh to Cart!<br>
+                <strong>Team Fresh to Cart</strong>
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p>Fresh to Cart - Your Fresh Food Marketplace</p>
+            <p>This email was sent to {{ order.user.email }}</p>
+        </div>
+    </div>
+</body>
+</html>

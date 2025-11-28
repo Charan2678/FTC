@@ -1,0 +1,138 @@
+{% extends 'base.html' %} {% block content %}
+<!--breadcrumbs start-->
+<div class="breadcrumbs">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4 col-sm-4">
+        <h1>
+            {{productdetails.product_name}}
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- //breadcrumbs -->
+
+<div class="typo">
+  <div class="container">
+    <div class="typo-grids">
+      <center>
+          {% csrf_token %}
+          </br>
+          {% if messages %}
+          <div class="alert alert-success fade in" style="margin:10px;">
+            {% for message in messages %}
+            <strong>{{ message }}</strong> {% endfor %}
+          </div>
+          {% endif %}
+          <div class="col-sm-2">&nbsp;</div>
+          <div class="col-sm-8" style="border:1px solid; padding: 30px;">
+              <form enctype="multipart/form-data" method="post" action="" id="cartForm">
+                {% csrf_token %}
+              <table style="width:100%; margin:0;">
+                <tr>
+                  <td style="width:40%"><img src="{{productdetails.product_image}}" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"></td>
+                  <td style="vertical-align:top; padding:20px; width:60%">
+                    <table>
+                      <tr>
+                        <th class="th_color" style="width:160px;">Name</th>
+                        <td class="td_color">{{productdetails.product_name}}</td>
+                      </tr>
+                      <tr>
+                        <th class="th_color" style="width:160px;">Type</th>
+                        <td class="td_color">{{productdetails.type_name}}</td>
+                      </tr>
+                      <tr>
+                        <th class="th_color" style="width:160px;">Farmer name</th>
+                        <td class="td_color">{{productdetails.company_name}}</td>
+                      </tr>
+                      <tr>
+                        <th class="th_color" style="width:160px;">Price</th>
+                        <td class="td_color">{{productdetails.product_price}}.00/- per kg</td>
+                      </tr>
+                      <tr>
+                        <th class="th_color" style="width:160px;">Quantity</th>
+                        <td class="td_color">
+                          <select name="product_quantity">
+                            <option value="1">1 Item</option>
+                            <option value="2">2 Item</option>
+                            <option value="3">3 Item</option>
+                            <option value="4">4 Item</option>
+                            <option value="5">5 Item</option>
+                            <option value="6">6 Item</option>
+                            <option value="7">7 Item</option>
+                            <option value="8">8 Item</option>
+                            <option value="9">9 Item</option>
+                            <option value="10">10 Item</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th class="th_color" style="width:160px;" colspan="2">Description</th>
+                      </tr>
+                      <tr>
+                        <td colspan="2">{{productdetails.product_description}}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="text-align:right">
+                            <button type="submit" class="btn btn-primary btn-cart" style="width:200px; margin-top:30px; font-weight:bold; font-size:16px; padding:12px; background: linear-gradient(45deg, #007bff, #0056b3); border:none; border-radius:25px; box-shadow: 0 4px 15px rgba(0,123,255,0.3);" id="addToCartBtn">
+                                <i class="fas fa-shopping-cart"></i> ADD TO CART
+                            </button>
+                            <br>
+
+                            <br><br>
+                            <a href="https://wa.me/916304999476?text=Hello%20I%20am%20interested%20in%20{{productdetails.product_name}}" target="_blank" style="text-decoration: none;">
+                              <img src="/assets/img/whatsapp_logo.png" style="width: 30px; height: 30px; margin: 10px;">
+                            </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              <input type="hidden" name="product_id" value="{{productdetails.product_id}}">
+              <input type="hidden" name="product_price" value="{{productdetails.product_price}}">
+            </form>
+          </div>
+          <div class="col-sm-2">&nbsp;</div>
+      </center>
+    </div>
+  </div>
+</div>
+<!--container end-->
+
+<style>
+.btn-cart {
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.btn-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,123,255,0.4) !important;
+}
+.btn-cart:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.product-table {
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.th_color {
+    background: #6c757d;
+    color: white;
+    padding: 12px;
+    font-weight: 600;
+}
+.td_color {
+    background: white;
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+</style>
+
+
+
+{% endblock content %}

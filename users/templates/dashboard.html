@@ -1,0 +1,331 @@
+{% extends 'base.html' %} {% block content %}
+
+<style>
+/* JioMart-Inspired Dashboard Styles with Farmer Green Theme */
+.dashboard-wrapper {
+	padding: 2rem 0;
+	background: #e8f5e9;
+	min-height: 85vh;
+}
+.dashboard-header {
+	text-align: center;
+	margin-bottom: 2.5rem;
+	background: #FFFFFF;
+	padding: 2rem;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(76, 175, 80, 0.12);
+}
+.dashboard-header h1 {
+	font-size: 28px;
+	font-weight: 700;
+	color: #4CAF50;
+	margin-bottom: 0.5rem;
+}
+.dashboard-header p {
+	font-size: 14px;
+	color: #2d5f3f;
+}
+.dashboard .btn-circle {
+	width: 180px;
+	height: 180px;
+	background: #FFFFFF;
+	border: 1px solid #c8e6c9;
+	box-shadow: 0 2px 8px rgba(76, 175, 80, 0.12);
+	transition: all 0.3s ease;
+	border-radius: 12px;
+	position: relative;
+	overflow: hidden;
+}
+.dashboard .btn-circle::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 4px;
+	background: #4CAF50;
+	transform: scaleX(0);
+	transition: transform 0.3s ease;
+}
+.dashboard .btn-circle:hover::after {
+	transform: scaleX(1);
+}
+.dashboard .btn-circle:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+	border-color: #4CAF50;
+}
+.btn-circle div {
+	font-size: 13px;
+	font-weight: 600;
+	color: #1A1A1A;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	text-align: center;
+	padding: 1rem;
+	flex-direction: column;
+}
+.btn-circle i {
+	font-size: 40px;
+	color: #4CAF50;
+	margin-bottom: 0.75rem;
+	display: block;
+}
+.mydash {
+	margin-bottom: 1.5rem;
+	padding: 0;
+}
+.dashboard-stats {
+	background: #FFFFFF;
+	padding: 1.5rem;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(76, 175, 80, 0.08);
+	margin-bottom: 2rem;
+}
+.stat-item {
+	text-align: center;
+	padding: 1rem;
+}
+.stat-number {
+	font-size: 32px;
+	font-weight: 700;
+	color: #4CAF50;
+	display: block;
+}
+.stat-label {
+	font-size: 13px;
+	color: #2d5f3f;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-top: 0.5rem;
+}
+</style>
+
+    <!--breadcrumbs start-->
+    <div class="breadcrumbs">
+	<div class="container">
+		<div class="row">
+		<div class="col-lg-12">
+			<h1><i class="fa fa-dashboard"></i> Dashboard</h1>
+		</div>
+		</div>
+	</div>
+	</div>
+	<!--breadcrumbs end-->
+	
+	<div class="dashboard-wrapper">
+		<div class="container">
+			<div class="dashboard-header">
+				<h1>Welcome to FTC!</h1>
+				{% if request.session.user_level_id == 1 or request.session.user_level_id == '1' %}
+					<p>Manage your farm trading platform</p>
+				{% elif request.session.user_level_id == 2 or request.session.user_level_id == '2' %}
+					<p>Browse fresh products and place orders</p>
+				{% elif request.session.user_level_id == 3 or request.session.user_level_id == '3' %}
+					<p>Manage your farm and products</p>
+				{% else %}
+					<p>Welcome to Farmer to Consumer platform</p>
+				{% endif %}
+			</div>
+			
+		{% if request.session.user_level_id == 1 or request.session.user_level_id == '1' %}	
+			<div class="row dashboard">
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/products/product-listing" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-leaf"></i>
+							Product Report
+						</div>
+					</a>	
+				</div><!--/.col-->	
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/type" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-tags"></i>
+							Product Types
+						</div>
+					</a>	
+				</div><!--/.col-->	
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/company" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-users"></i>
+							Farmer Report
+						</div>
+					</a>	
+				</div><!--/.col-->	
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/users/report/2/" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-user"></i>
+							Customer Report
+						</div>
+					</a>	
+				</div><!--/.col-->
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/products/order-listing" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-shopping-cart"></i>
+							Order Report
+						</div>
+					</a>	
+				</div><!--/.col-->				
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/products/add" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-plus-circle"></i>
+							Add Product
+						</div>
+					</a>	
+				</div><!--/.col-->
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/company/add" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-user-plus"></i>
+							Add Farmer
+						</div>
+					</a>	
+				</div><!--/.col-->
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/type/add" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-tag"></i>
+							Add Type
+						</div>
+					</a>	
+				</div><!--/.col-->				
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/users/update/{{ request.session.user_id }}/" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-cog"></i>
+							My Account
+						</div>
+					</a>	
+				</div><!--/.col-->
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/users/changepassword" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-lock"></i>
+							Password
+						</div>
+					</a>	
+				</div><!--/.col-->
+				<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mydash">
+					<a href="/users/logout" class="btn btn-default btn-circle">
+						<div>
+							<i class="fa fa-sign-out"></i>
+							Logout
+						</div>
+					</a>	
+				</div><!--/.col-->				
+			</div><!-- row -->				  
+		{% endif %}
+		{% if request.session.user_level_id == 2 or request.session.user_level_id == '2' %}	
+		<div class="row dashboard">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/products/" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-shopping-cart"></i>
+						Shop Products
+					</div>
+				</a>	
+			</div><!--/.col-->
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/products/cart/" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-shopping-basket"></i>
+						My Cart
+					</div>
+				</a>	
+			</div><!--/.col-->
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/products/order-listing" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-shopping-bag"></i>
+						My Orders
+					</div>
+				</a>	
+			</div><!--/.col-->							
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/users/update/{{ request.session.user_id }}/" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-user-circle"></i>
+						My Account
+					</div>
+				</a>	
+			</div><!--/.col-->
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/users/changepassword" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-key"></i>
+						Password
+					</div>
+				</a>	
+			</div><!--/.col-->
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/users/logout" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-power-off"></i>
+						Logout
+					</div>
+				</a>	
+			</div><!--/.col-->				
+		</div><!-- row -->				  
+	{% endif %}
+	{% if request.session.user_level_id == 3 or request.session.user_level_id == '3' %}	
+		<div class="row dashboard">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/products/add" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-plus-circle"></i>
+						Add Product
+					</div>
+				</a>	
+			</div><!--/.col-->
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/products/product-listing" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-leaf"></i>
+						My Products
+					</div>
+				</a>	
+			</div><!--/.col-->
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/products/order-listing" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-shopping-cart"></i>
+						Orders Received
+					</div>
+				</a>	
+			</div><!--/.col-->							
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/users/update/{{ request.session.user_id }}/" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-user-circle"></i>
+						My Account
+					</div>
+				</a>	
+			</div><!--/.col-->
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/users/changepassword" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-key"></i>
+						Password
+					</div>
+				</a>	
+			</div><!--/.col-->
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mydash">
+				<a href="/users/logout" class="btn btn-default btn-circle">
+					<div>
+						<i class="fa fa-power-off"></i>
+						Logout
+					</div>
+				</a>	
+			</div><!--/.col-->				
+		</div><!-- row -->				  
+	{% endif %}
+		</div><!-- container -->
+	</div><!-- dashboard-wrapper -->
+{% endblock content %}

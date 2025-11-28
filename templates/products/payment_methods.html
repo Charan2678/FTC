@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Methods - Fresh to Cart{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .payment-method-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    .method-icon {
+        font-size: 2em;
+        width: 60px;
+        text-align: center;
+    }
+    
+    .card-icon { color: #e67e22; }
+    .upi-icon { color: #9b59b6; }
+    .wallet-icon { color: #1abc9c; }
+    .bank-icon { color: #34495e; }
+    .cod-icon { color: #27ae60; }
+    
+    .method-details {
+        flex: 1;
+    }
+    
+    .method-name {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    
+    .method-info {
+        color: #7f8c8d;
+        font-size: 0.9em;
+    }
+    
+    .default-badge {
+        background: #27ae60;
+        color: white;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        margin-left: 10px;
+    }
+    
+    .add-method-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 15px 30px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+    }
+    
+    .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    
+    .submit-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 12px 25px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+    .close:hover {
+        color: #000;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <h1 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">
+        <i class="fas fa-credit-card"></i> Payment Methods
+    </h1>
+    
+    {% if payment_methods %}
+        {% for method in payment_methods %}
+        <div class="payment-method-card">
+            <div class="method-icon">
+                {% if method.payment_type == 'card' %}
+                    <i class="fas fa-credit-card card-icon"></i>
+                {% elif method.payment_type == 'upi' %}
+                    <i class="fab fa-google-pay upi-icon"></i>
+                {% elif method.payment_type == 'wallet' %}
+                    <i class="fas fa-wallet wallet-icon"></i>
+                {% elif method.payment_type == 'netbanking' %}
+                    <i class="fas fa-university bank-icon"></i>
+                {% elif method.payment_type == 'cod' %}
+                    <i class="fas fa-money-bill-wave cod-icon"></i>
+                {% endif %}
+            </div>
+            
+            <div class="method-details">
+                <div class="method-name">
+                    {{ method.get_payment_type_display }}
+                    {% if method.is_default %}
+                        <span class="default-badge">Default</span>
+                    {% endif %}
+                </div>
+                <div class="method-info">{{ method }}</div>
+            </div>
+            
+            <div>
+                <button onclick="deletePaymentMethod({{ method.id }})" 
+                        style="background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;">
+                    <i class="fas fa-trash"></i> Remove
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="text-align: center; padding: 40px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <i class="fas fa-credit-card" style="font-size: 3em; color: #bdc3c7; margin-bottom: 15px;"></i>
+            <h3>No Payment Methods</h3>
+            <p style="color: #7f8c8d;">Add a payment method to make checkout faster.</p>
+        </div>
+    {% endif %}
+    
+    <button class="add-method-btn" onclick="showAddMethodModal()">
+        <i class="fas fa-plus"></i>
+        Add Payment Method
+    </button>
+</div>
+
+<!-- Add Payment Method Modal -->
+<div id="addMethodModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3 style="margin-top: 0; color: #2c3e50;">Add Payment Method</h3>
+        
+        <form method="post" action="{% url 'add_payment_method' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="payment_type">Payment Type</label>
+                <select id="payment_type" name="payment_type" onchange="showPaymentFields()" required>
+                    <option value="">Select payment type</option>
+                    <option value="card">Credit/Debit Card</option>
+                    <option value="upi">UPI</option>
+                    <option value="wallet">Digital Wallet</option>
+                    <option value="netbanking">Net Banking</option>
+                </select>
+            </div>
+            
+            <!-- Card Fields -->
+            <div id="card_fields" style="display: none;">
+                <div class="form-group">
+                    <label for="card_number">Card Number</label>
+                    <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                
+                <div class="form-group">
+                    <label for="card_holder_name">Cardholder Name</label>
+                    <input type="text" id="card_holder_name" name="card_holder_name" placeholder="Name on card">
+                </div>
+                
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="expiry_month">Expiry Month</label>
+                        <select id="expiry_month" name="expiry_month">
+                            {% for i in "123456789012"|make_list %}
+                                <option value="{{ forloop.counter }}">{{ forloop.counter|stringformat:"02d" }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="flex: 1;">
+                        <label for="expiry_year">Expiry Year</label>
+                        <select id="expiry_year" name="expiry_year">
+                            {% for i in "12345678910"|make_list %}
+                                <option value="{{ 2024|add:forloop.counter0 }}">{{ 2024|add:forloop.counter0 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- UPI Fields -->
+            <div id="upi_fields" style="display: none;">
+                <div class="form-group">
+                    <label for="upi_id">UPI ID</label>
+                    <input type="text" id="upi_id" name="upi_id" placeholder="yourname@paytm">
+                </div>
+            </div>
+            
+            <!-- Wallet Fields -->
+            <div id="wallet_fields" style="display: none;">
+                <div class="form-group">
+                    <label for="wallet_provider">Wallet Provider</label>
+                    <select id="wallet_provider" name="wallet_provider">
+                        <option value="">Select wallet</option>
+                        <option value="Paytm">Paytm</option>
+                        <option value="PhonePe">PhonePe</option>
+                        <option value="Google Pay">Google Pay</option>
+                        <option value="Amazon Pay">Amazon Pay</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wallet_number">Wallet Number/ID</label>
+                    <input type="text" id="wallet_number" name="wallet_number" placeholder="Wallet number">
+                </div>
+            </div>
+            
+            <!-- Net Banking Fields -->
+            <div id="banking_fields" style="display: none;">
+                <div class="form-group">
+                    <label for="bank_name">Bank Name</label>
+                    <input type="text" id="bank_name" name="bank_name" placeholder="Bank name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="account_number">Account Number</label>
+                    <input type="text" id="account_number" name="account_number" placeholder="Account number">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="is_default"> Set as default payment method
+                </label>
+            </div>
+            
+            <button type="submit" class="submit-btn">Add Payment Method</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function showAddMethodModal() {
+    document.getElementById('addMethodModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('addMethodModal').style.display = 'none';
+}
+
+function showPaymentFields() {
+    const paymentType = document.getElementById('payment_type').value;
+    
+    // Hide all fields first
+    document.getElementById('card_fields').style.display = 'none';
+    document.getElementById('upi_fields').style.display = 'none';
+    document.getElementById('wallet_fields').style.display = 'none';
+    document.getElementById('banking_fields').style.display = 'none';
+    
+    // Show relevant fields
+    if (paymentType === 'card') {
+        document.getElementById('card_fields').style.display = 'block';
+    } else if (paymentType === 'upi') {
+        document.getElementById('upi_fields').style.display = 'block';
+    } else if (paymentType === 'wallet') {
+        document.getElementById('wallet_fields').style.display = 'block';
+    } else if (paymentType === 'netbanking') {
+        document.getElementById('banking_fields').style.display = 'block';
+    }
+}
+
+function deletePaymentMethod(methodId) {
+    if (confirm('Are you sure you want to remove this payment method?')) {
+        fetch(`/delete-payment-method/${methodId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error removing payment method');
+            }
+        });
+    }
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('addMethodModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Format card number input
+document.getElementById('card_number').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+    e.target.value = value;
+});
+</script>
+{% endblock %}

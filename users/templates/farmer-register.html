@@ -1,0 +1,121 @@
+{% extends 'base.html' %} {% block content %}
+<script>
+	jQuery(function () {
+		jQuery("#user_dob").datepicker({
+			changeMonth: true,
+			changeYear: true,
+			yearRange: "0:+1",
+			dateFormat: 'd MM,yy'
+		});
+	});
+</script>
+
+<!--container start-->
+<div class="registration-bg">
+	<div class="container">
+		<div class="row">
+			<form enctype="multipart/form-data" method="post" class="form-signin" action="" style="max-width:800px;">
+				{% csrf_token %}
+				<h2 class="form-signin-heading">
+					FARMER REGISTRATION
+				</h2>
+			{% if messages %}
+				<div class="alert alert-success fade in" style="margin:10px;">
+					{% for message in messages %}
+						<strong>{{ message }}</strong>
+					{% endfor %}
+				</div>
+			{% endif %}
+			<div class="login-wrap">
+				<div class="col-xs-6 form-group">
+					<label for="user_name">Farmer Name</label>
+					<input type="text" class="form-control" placeholder="Farmer Name" required autofocus name="user_name" id="user_name">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_username">Login ID (Username)</label>
+					<input type="text" class="form-control" placeholder="Username" required name="user_username" id="user_username">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_password">Password</label>
+					<input type="password" class="form-control" placeholder="Password" required name="user_password" id="user_password">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_confirm_password">Confirm Password</label>
+					<input type="password" class="form-control" placeholder="Confirm Password" required name="user_confirm_password" id="user_confirm_password">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label>Gender</label>
+					<div style="padding: 10px 0;">
+						<label style="font-weight:normal; margin-right:20px;">
+							<input type="radio" name="user_gender" value="Male" required> Male
+						</label>
+						<label style="font-weight:normal;">
+							<input type="radio" name="user_gender" value="Female" required> Female
+						</label>
+					</div>
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_email">Farmer Email</label>
+					<input type="email" class="form-control" placeholder="Email" required name="user_email" id="user_email">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_mobile">Mobile Number</label>
+					<input type="text" class="form-control" placeholder="Mobile Number" required name="user_mobile" id="user_mobile">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_dob">Date of Birth</label>
+					<input type="text" class="form-control" placeholder="Date of Birth" id="user_dob" name="user_dob">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="company_name">Farm Name</label>
+					<input type="text" class="form-control" placeholder="Farm/Company Name" name="company_name" id="company_name">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_add1">Farm Address Line 1</label>
+					<input type="text" class="form-control" placeholder="Address Line 1" name="user_add1" id="user_add1">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_add2">Farm Address Line 2</label>
+					<input type="text" class="form-control" placeholder="Address Line 2" name="user_add2" id="user_add2">
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_country">Country</label>
+					<select name="user_country" id="user_country" class="form-control" required>
+					<option value="">Please Select</option>
+					{% for country in countrylist %}
+					<option value="{{ country.country_id }}">{{country.country_name}}</option>
+					{% endfor %}
+					</select>
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_state">State</label>
+					<select name="user_state" id="user_state" class="form-control" required>
+					<option value="">Please Select</option>
+					{% for state in statelist %}
+					<option value="{{ state.state_id }}">{{state.state_name}}</option>
+					{% endfor %}
+					</select>
+				</div>
+				<div class="col-xs-6 form-group">
+					<label for="user_city">City</label>
+					<select name="user_city" id="user_city" required class="form-control">
+					<option value="">Please Select</option>
+					{% for city in citylist %}
+					<option value="{{ city.city_id }}">{{city.city_name}}</option>
+					{% endfor %}
+					</select>
+				</div>
+				<div class="col-xs-12 form-group">
+					<label for="user_image">Upload Profile Photo (Optional)</label>
+					<input type="file" class="form-control" name="user_image" id="user_image" accept="image/*">
+				</div>
+				<button class="btn btn-lg btn-login btn-block" type="submit">Register as Farmer</button>
+			</div>
+			<input type="hidden" name="act" value="save_farmer">
+			<input type="hidden" name="user_level_id" value="3">
+		</form>
+		</div>
+	</div>
+</div>
+
+{% endblock content %}
