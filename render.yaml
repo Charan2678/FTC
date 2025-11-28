@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: ftc-app
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn FTC.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ftc-database
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: DJANGO_SETTINGS_MODULE
+        value: FTC.settings
+
+databases:
+  - name: ftc-database
+    databaseName: ftc
+    user: ftc
